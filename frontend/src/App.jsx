@@ -84,7 +84,7 @@ function MatchCard({ match }) {
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <h2 className="text-2xl font-bold text-slate-900">{translateTeam(homeTeam)}</h2>
-            <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold uppercase tracking-[0.2em] text-blue-800">
+            <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold text-blue-800">
               נגד
             </span>
             <h2 className="text-2xl font-bold text-slate-900">{translateTeam(awayTeam)}</h2>
@@ -109,7 +109,7 @@ function MatchCard({ match }) {
             href={highlightUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
           >
             <HighlightIcon className="h-4 w-4" />
             צפה בתקציר
@@ -183,10 +183,6 @@ function App() {
             <p className="text-sm text-blue-100">
               עקוב אחרי המשחקים ועבור ישירות לתקצירים.
             </p>
-          </div>
-          <div className="ml-auto hidden items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-100 sm:inline-flex">
-            <Radio className="h-3.5 w-3.5" />
-            מרכז המשחקים
           </div>
         </div>
       </header>
