@@ -81,31 +81,28 @@ function MatchCard({ match, onToggleWatched }) {
 
   return (
     <article
-      className={`rounded-xl border border-slate-200 bg-white shadow-md transition-all hover:shadow-lg ${
-        watched ? 'opacity-60' : ''
-      }`}
+      className="rounded-xl border border-slate-200 bg-white shadow-md transition-all hover:shadow-lg"
     >
       {watched ? (
-        <div className="flex items-center justify-between gap-3 p-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex min-w-0 flex-wrap items-center gap-2 text-base font-bold text-slate-800 sm:text-lg">
-              <span className="truncate">{translateTeam(homeTeam)}</span>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
-                נגד
-              </span>
-              <span className="truncate">{translateTeam(awayTeam)}</span>
-            </div>
-            <span className="inline-flex shrink-0 items-center rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
-              {watchedLabel}
+        <div className="flex flex-col gap-2 p-4">
+          <div className="flex flex-wrap items-center gap-2 text-base font-bold text-slate-800 sm:text-lg">
+            <span>{translateTeam(homeTeam)}</span>
+            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+              נגד
             </span>
+            <span>{translateTeam(awayTeam)}</span>
           </div>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
-            >
-              {translateStatus(status)}
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
+              >
+                {translateStatus(status)}
+              </span>
+              <span className="inline-flex shrink-0 items-center rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                {watchedLabel}
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => onToggleWatched(matchId, watched)}
@@ -121,9 +118,9 @@ function MatchCard({ match, onToggleWatched }) {
         <div className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-4">
-              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-2xl font-bold text-slate-900">{translateTeam(homeTeam)}</h2>
-                <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold text-blue-800">
+                <span className="inline-flex items-center justify-center rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">
                   נגד
                 </span>
                 <h2 className="text-2xl font-bold text-slate-900">{translateTeam(awayTeam)}</h2>
