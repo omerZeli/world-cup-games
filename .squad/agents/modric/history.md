@@ -49,3 +49,11 @@
 - The same file also uses `match.id` instead of `match.matchId` for React keys.
 - Keep this in mind when wiring CI, preview deployments, and any smoke-test expectations.
 2026-06-15 — Created root package.json with Render build/start scripts for monorepo deployment as single Web Service.
+
+## 2026-06-15 — Daily worker cron workflow created
+
+- Created `.github/workflows/daily-worker.yml` for `worker.js`.
+- Runs at `0 6 * * *` UTC (9AM IST).
+- Includes `workflow_dispatch` for manual runs.
+- Uses Node 20 and installs Playwright Chromium before execution.
+- Injects `DATABASE_URL` and `FOOTBALL_API_KEY` secrets into the job.
