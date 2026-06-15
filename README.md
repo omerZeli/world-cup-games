@@ -124,6 +124,3 @@ Additional squad automation workflows are also included for project operations.
 | `GET` | `/api/matches` | Returns matches for the dashboard |
 | `PATCH` | `/api/matches/:id/watched` | Marks a match as watched (compacts the card) |
 
-## Contributing
-
-Contributions are welcome. Keep the core product principle intact: **scores and match outcomes are never shown — no exceptions.**
