@@ -48,7 +48,7 @@ app.patch('/api/matches/:id/watched', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 
