@@ -1,12 +1,10 @@
 import dotenv from 'dotenv';
-import { writeFile } from 'fs/promises';
 import { fetchMatches } from './services/footballApi.js';
 import { translateTeam } from './utils/teamsTranslator.js';
 import { scrapeHighlightUrl } from './services/youtubeScraper.js';
+import { initDB, upsertMatches } from './services/db.js';
 
 dotenv.config();
-
-const DATA_FILE = 'data.json';
 
 function randomDelay(minMs, maxMs) {
   const ms = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
@@ -14,6 +12,7 @@ function randomDelay(minMs, maxMs) {
 }
 
 async function run() {
+  await initDB();
   const matches = await fetchMatches();
   console.log(`Fetched ${matches.length} matches`);
 
@@ -44,8 +43,7 @@ async function run() {
 
   const allMatches = [...upcomingMatches, ...finishedMatches];
 
-  await writeFile(DATA_FILE, JSON.stringify(allMatches, null, 2), 'utf8');
-  console.log(`\n💾 Saved ${allMatches.length} matches to ${DATA_FILE}`);
+  await upsertMatches(allMatches);
 }
 
 run().catch((error) => {
