@@ -9,6 +9,14 @@
   1. `homeTeam` and `awayTeam` are plain strings from the backend, so `homeTeam.name` / `awayTeam.name` are incorrect.
   2. Match identity is stored as `match.matchId`, so React list keys must not use `match.id`.
 
+### 2026-06-15 — Hebrew i18n + RTL
+- Updated `frontend/index.html` to set `lang="he"` and `dir="rtl"` on the root `<html>` element.
+- Translated all user-visible strings in `frontend/src/App.jsx` to Hebrew.
+- Added `translateStatus(status)` so match status logic stays in English while the UI displays Hebrew labels.
+- Switched match time formatting to the `he-IL` locale.
+- Added `dir="rtl"` to the App root container for RTL layout safety.
+- Verified the frontend compiles successfully with `npm run build`.
+
 ### 2026-06-15 — Backend architecture baseline
 - Chose ESM modules across the worker, services, and utilities for consistent modern Node.js imports/exports.
 - Standardized HTTP access on axios for authenticated Football Data API calls and predictable response/header handling.

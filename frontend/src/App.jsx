@@ -306,8 +306,8 @@ function App() {
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <header className="sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-2xl">
-            ⚽
+          <div className="h-12 w-12 overflow-hidden rounded-full bg-white/15">
+            <img src="/logo.png" alt="מונדיאל 2026" className="h-full w-full object-cover" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">מונדיאל 2026</h1>
