@@ -37,3 +37,8 @@ export async function upsertMatches(matches) {
 
   console.log(`💾 Upserted ${matches.length} matches to the database`);
 }
+
+export async function getMatches() {
+  const { rows } = await pool.query(`SELECT * FROM matches ORDER BY "utcDate" ASC`);
+  return rows;
+}
