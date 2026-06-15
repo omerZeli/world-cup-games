@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import './App.css'
+import * as Icons from 'lucide-react'
+
+const { CalendarDays, CircleAlert, LoaderCircle, Play, Radio, Trophy } = Icons
+const youtubeKey = ['You', 'tube'].join('')
+const HighlightIcon = Icons[youtubeKey] ?? Play
 
 function formatMatchTime(utcDate) {
   return new Date(utcDate).toLocaleString(undefined, {
@@ -12,26 +16,89 @@ function formatMatchTime(utcDate) {
   })
 }
 
+function getStatusBadgeClasses(status) {
+  switch (status) {
+    case 'FINISHED':
+      return 'bg-slate-200 text-slate-700'
+    case 'LIVE':
+    case 'IN_PLAY':
+    case 'PAUSED':
+      return 'bg-emerald-100 text-emerald-700'
+    case 'SCHEDULED':
+    case 'TIMED':
+      return 'bg-blue-100 text-blue-700'
+    default:
+      return 'bg-slate-100 text-slate-600'
+  }
+}
+
+function StateCard({ icon, title, message, tone = 'default', spin = false }) {
+  const toneClasses =
+    tone === 'error'
+      ? 'bg-red-50 text-red-700 ring-1 ring-red-100'
+      : 'bg-white text-slate-700 shadow-md ring-1 ring-slate-200'
+
+  return (
+    <div className="flex min-h-[calc(100vh-9rem)] items-center justify-center px-4">
+      <div className={`w-full max-w-md rounded-2xl p-8 text-center ${toneClasses}`}>
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/80 text-blue-700 shadow-sm">
+          {icon ? (
+            <span className={spin ? 'animate-spin' : ''}>{icon}</span>
+          ) : (
+            <span className="text-3xl" aria-hidden="true">
+              ⚽
+            </span>
+          )}
+        </div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        <p className="mt-2 text-sm text-slate-500">{message}</p>
+      </div>
+    </div>
+  )
+}
+
 function MatchCard({ match }) {
   const { homeTeam, awayTeam, utcDate, status, highlightUrl } = match
 
   return (
-    <li className="match-card">
-      <span className="teams">
-        {homeTeam} <span className="vs">vs</span> {awayTeam}
-      </span>
-      <span className="match-time">{formatMatchTime(utcDate)}</span>
-      {status === 'FINISHED' && highlightUrl && (
-        <a
-          href={highlightUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="highlights-link"
+    <article className="rounded-xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-4">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <h2 className="text-2xl font-bold text-slate-900">{homeTeam}</h2>
+            <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold uppercase tracking-[0.2em] text-blue-800">
+              VS
+            </span>
+            <h2 className="text-2xl font-bold text-slate-900">{awayTeam}</h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
+              <CalendarDays className="h-4 w-4" />
+              {formatMatchTime(utcDate)}
+            </span>
+          </div>
+        </div>
+        <span
+          className={`inline-flex items-center self-start rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
         >
-          ▶ Watch Highlights
-        </a>
+          {status}
+        </span>
+      </div>
+
+      {status === 'FINISHED' && highlightUrl && (
+        <div className="mt-6">
+          <a
+            href={highlightUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+          >
+            <HighlightIcon className="h-4 w-4" />
+            Watch Highlights
+          </a>
+        </div>
       )}
-    </li>
+    </article>
   )
 }
 
@@ -48,19 +115,66 @@ function App() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <p className="status-msg">Loading matches…</p>
-  if (error) return <p className="status-msg error">Error: {error}</p>
-  if (matches.length === 0) return <p className="status-msg">No matches found.</p>
+  let content
+
+  if (loading) {
+    content = (
+      <StateCard
+        icon={<LoaderCircle className="h-7 w-7" />}
+        title="Loading fixtures"
+        message="Fetching the latest World Cup 2026 matches."
+        spin
+      />
+    )
+  } else if (error) {
+    content = (
+      <StateCard
+        icon={<CircleAlert className="h-7 w-7" />}
+        title="Unable to load matches"
+        message={`Error: ${error}`}
+        tone="error"
+      />
+    )
+  } else if (matches.length === 0) {
+    content = (
+      <StateCard
+        icon={<Trophy className="h-7 w-7" />}
+        title="No matches available"
+        message="Check back soon for upcoming fixtures and highlight-ready results."
+      />
+    )
+  } else {
+    content = (
+      <div className="grid gap-6">
+        {matches.map((match, index) => (
+          <MatchCard key={match.matchId ?? index} match={match} />
+        ))}
+      </div>
+    )
+  }
 
   return (
-    <main>
-      <h1>⚽ World Cup 2026</h1>
-      <ul className="match-list">
-        {matches.map((match) => (
-          <MatchCard key={match.matchId} match={match} />
-        ))}
-      </ul>
-    </main>
+    <div className="min-h-screen bg-slate-50">
+      <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
+        <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-2xl">
+            ⚽
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">World Cup 2026</h1>
+            <p className="text-sm text-blue-100">
+              Follow fixtures live and jump straight to finished-match highlights.
+            </p>
+          </div>
+          <div className="ml-auto hidden items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-100 sm:inline-flex">
+            <Radio className="h-3.5 w-3.5" />
+            Match Center
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-4 py-8">{content}</main>
+    </div>
   )
 }
 

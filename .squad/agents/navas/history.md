@@ -189,3 +189,10 @@ This codebase is currently in a **high-risk / low-observability** state: the pro
 
 - Add these to active regression targets: `frontend/src/App.jsx` incorrectly dereferences `homeTeam.name` and `awayTeam.name` even though the API returns plain strings, and it uses `match.id` instead of `match.matchId` for list keys.
 - Any frontend smoke test or integration check should assert the corrected contract once the UI is patched.
+
+## 2026-06-15 — Tailwind UI spoiler-free QA checklist
+
+- Reviewed the planned Task 6 UI specifically for spoiler-leak risk.
+- Captured acceptance criteria that restrict rendered data to safe `/api/matches` fields and forbid score, goal, result, or winner language in DOM text and attributes.
+- Added edge-case coverage for missing highlights, unknown statuses, invalid dates, long team names, duplicate `matchId` values, and non-Latin text.
+- Marked the review yellow pending Ronaldo verification against rendered DOM output.

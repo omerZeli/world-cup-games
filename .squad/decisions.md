@@ -16,6 +16,26 @@
 - Set the rate-limit throttle threshold to 2 remaining requests by default, with throttling based on the API reset header before returning control.
 - Enforced spoiler-free mapping at the API boundary so only match id, team names, utcDate, and status move downstream.
 
+### 2026-06-15 — No-git operating rule
+- Per user directive, this project must not use git actions during agent execution.
+- Prohibited examples include `git commit`, `git add`, `git push`, `git checkout`, and `git reset`.
+- Team members should make file-only changes and leave all git operations to the user.
+
+### 2026-06-15 — Frontend Tailwind UI direction
+- The frontend dashboard should use a sticky blue gradient header with a compact Match Center pill to give the SPA a live-event feel.
+- `frontend/src/App.jsx` should rely on Tailwind utility classes and no longer depend on `App.css`.
+- `lucide-react` should be imported through a namespace so the UI can prefer `Youtube` and safely fall back to `Play` in the installed package version.
+- Match cards should prioritize team names, a centered VS badge, a date/time chip, and a status pill.
+- The highlight CTA must stay prominent, generic, and gated to `FINISHED` matches with a truthy `highlightUrl`.
+- No scores, winners, or result language may be rendered anywhere in the UI.
+
+### 2026-06-15 — UI spoiler-free QA acceptance
+- The frontend may render only spoiler-safe fields from `/api/matches`: `matchId`, `homeTeam`, `awayTeam`, `utcDate`, `status`, and optional `highlightUrl`.
+- Rendered DOM text, attributes, and accessible names must not expose score, goal, result, or winner language.
+- Match cards must ignore unknown payload keys even if the backend later returns extra fields.
+- Error and empty states must remain safe and must not surface raw backend payloads.
+- UI handling should stay resilient for unknown statuses, missing highlight URLs, invalid dates, long team names, and non-Latin text.
+
 ## Governance
 
 - All meaningful changes require team consensus

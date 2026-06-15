@@ -125,3 +125,10 @@ The skeleton is good for a first pass, but it is not yet production-ready. The b
   - Render team names from `homeTeam` / `awayTeam` directly because they are plain strings, not objects with `.name`.
   - Use `match.matchId` for React list keys instead of `match.id`.
 - Keep this in mind for any future UI fixes, QA follow-up, or schema coordination with Ramos.
+
+## 2026-06-15 — Tailwind dashboard delivery
+
+- Completed a full `frontend/src/App.jsx` rewrite around Tailwind utility classes.
+- Added a sticky gradient header, polished match cards, status pills, and a generic highlight CTA with `lucide-react` Youtube/Play fallback.
+- Kept highlight rendering gated to `FINISHED` matches with a truthy `highlightUrl` and preserved spoiler-free output.
+- Validation note from execution: frontend build passed.
