@@ -18,7 +18,7 @@ function MatchCard({ match }) {
   return (
     <li className="match-card">
       <span className="teams">
-        {homeTeam.name} <span className="vs">vs</span> {awayTeam.name}
+        {homeTeam} <span className="vs">vs</span> {awayTeam}
       </span>
       <span className="match-time">{formatMatchTime(utcDate)}</span>
       {status === 'FINISHED' && highlightUrl && (
@@ -57,7 +57,7 @@ function App() {
       <h1>⚽ World Cup 2026</h1>
       <ul className="match-list">
         {matches.map((match) => (
-          <MatchCard key={match.id} match={match} />
+          <MatchCard key={match.matchId} match={match} />
         ))}
       </ul>
     </main>
