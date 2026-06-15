@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import * as Icons from 'lucide-react'
+import { translateTeam } from './utils/teamsTranslator'
 
 const { CalendarDays, CircleAlert, LoaderCircle, Play, Radio, Trophy } = Icons
 const youtubeKey = ['You', 'tube'].join('')
 const HighlightIcon = Icons[youtubeKey] ?? Play
 
 function formatMatchTime(utcDate) {
-  return new Date(utcDate).toLocaleString(undefined, {
+  return new Date(utcDate).toLocaleString('he-IL', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function translateStatus(status) {
+  switch (status) {
+    case 'FINISHED':
+      return 'הסתיים'
+    case 'LIVE':
+    case 'IN_PLAY':
+      return 'משחק חי'
+    case 'PAUSED':
+      return 'הפסקה'
+    case 'SCHEDULED':
+    case 'TIMED':
+      return 'מתוכנן'
+    default:
+      return status
+  }
 }
 
 function getStatusBadgeClasses(status) {
@@ -65,11 +83,11 @@ function MatchCard({ match }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <h2 className="text-2xl font-bold text-slate-900">{homeTeam}</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{translateTeam(homeTeam)}</h2>
             <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold uppercase tracking-[0.2em] text-blue-800">
-              VS
+              נגד
             </span>
-            <h2 className="text-2xl font-bold text-slate-900">{awayTeam}</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{translateTeam(awayTeam)}</h2>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
             <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
@@ -81,7 +99,7 @@ function MatchCard({ match }) {
         <span
           className={`inline-flex items-center self-start rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
         >
-          {status}
+          {translateStatus(status)}
         </span>
       </div>
 
@@ -94,7 +112,7 @@ function MatchCard({ match }) {
             className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
           >
             <HighlightIcon className="h-4 w-4" />
-            Watch Highlights
+            צפה בתקציר
           </a>
         </div>
       )}
@@ -121,8 +139,8 @@ function App() {
     content = (
       <StateCard
         icon={<LoaderCircle className="h-7 w-7" />}
-        title="Loading fixtures"
-        message="Fetching the latest World Cup 2026 matches."
+        title="טוען משחקים..."
+        message="מביא את משחקי מונדיאל 2026 העדכניים ביותר."
         spin
       />
     )
@@ -130,8 +148,8 @@ function App() {
     content = (
       <StateCard
         icon={<CircleAlert className="h-7 w-7" />}
-        title="Unable to load matches"
-        message={`Error: ${error}`}
+        title="לא ניתן לטעון משחקים"
+        message={`שגיאה: ${error}`}
         tone="error"
       />
     )
@@ -139,8 +157,8 @@ function App() {
     content = (
       <StateCard
         icon={<Trophy className="h-7 w-7" />}
-        title="No matches available"
-        message="Check back soon for upcoming fixtures and highlight-ready results."
+        title="אין משחקים זמינים"
+        message="חזור בקרוב לסידרת המשחקים הקרובה."
       />
     )
   } else {
@@ -154,21 +172,21 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50" dir="rtl">
       <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-5">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-2xl">
             ⚽
           </div>
           <div>
-            <h1 className="text-2xl font-bold">World Cup 2026</h1>
+            <h1 className="text-2xl font-bold">מונדיאל 2026</h1>
             <p className="text-sm text-blue-100">
-              Follow fixtures live and jump straight to finished-match highlights.
+              עקוב אחרי המשחקים ועבור ישירות לתקצירים.
             </p>
           </div>
           <div className="ml-auto hidden items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-100 sm:inline-flex">
             <Radio className="h-3.5 w-3.5" />
-            Match Center
+            מרכז המשחקים
           </div>
         </div>
       </header>
