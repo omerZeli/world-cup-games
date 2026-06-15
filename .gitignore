@@ -8,4 +8,7 @@
 # Squad: SubSquad activation file (local to this machine)
 .squad-workstream
 
-node_modules
+node_modules/
+.env
+data.json
+data/*.json

@@ -1,5 +1,16 @@
 {
-  "devDependencies": {
-    "@bradygaster/squad-cli": "^0.10.0"
+  "name": "world-cup-games",
+  "version": "1.0.0",
+  "description": "World Cup 2026 daily match tracker — spoiler-free",
+  "type": "module",
+  "main": "src/worker.js",
+  "scripts": {
+    "start": "node src/worker.js",
+    "dev": "node --watch src/worker.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5"
   }
 }
