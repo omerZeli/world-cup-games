@@ -1,22 +1,26 @@
-# ⚽ World Cup 2026 Daily Tracker & Highlights
+<p align="center">
+  <img src="frontend/public/logo.png" alt="World Cup 2026" width="80" />
+</p>
+
+# World Cup 2026 Daily Tracker & Highlights
 
 Automated, spoiler-free match tracking and Hebrew highlights for the 2026 World Cup — powered by daily data syncs, YouTube discovery, and a responsive React dashboard.
 
 ![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase%20%7C%20Neon-4169E1?logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Daily%20Automation-2088FF?logo=githubactions&logoColor=white)
 
 > [!IMPORTANT]
-> **Strictly spoiler-free by design.** Final scores, goals, and match outcomes stay hidden until a user explicitly marks a match as **watched**. Users can safely browse schedules and highlights without accidental spoilers.
+> **Strictly spoiler-free by design.** Scores, goals, and match outcomes are never displayed. Users can safely browse schedules and highlights without any spoilers.
 
 ## Features
 
 - Daily automated match updates via GitHub Actions (`daily-worker.yml`, runs `node src/worker.js`)
-- Spoiler-free match cards with hidden scores
+- Spoiler-free match cards — scores and outcomes are never shown
 - Split views for **Finished** and **Upcoming** matches
 - Hebrew YouTube highlight links for finished matches
-- Per-match **watch toggle** to reveal the score and compact the card
+- Per-match **watch toggle** to compact a finished card after you've seen it
 - Responsive React dashboard with RTL (Hebrew) layout
 - Simple REST API:
   - `GET /api/matches`
@@ -32,15 +36,17 @@ GitHub Actions (cron: 06:00 UTC)
         /                \
        v                  v
 football-data.org   YouTube Data API
-                         |
-                         v
-               PostgreSQL (Supabase / Neon)
-                         |
-                         v
-            Express API (backend/src/server.js)
-                         |
-                         v
-          React + Vite Frontend (spoiler-free UI)
+       |                  |
+       +--------+---------+
+                |
+                v
+          PostgreSQL (Neon)
+                |
+                v
+     Express API (backend/src/server.js)
+                |
+                v
+   React + Vite Frontend (spoiler-free UI)
 ```
 
 ## Tech Stack
@@ -50,9 +56,9 @@ football-data.org   YouTube Data API
 | Frontend | React, Vite, Tailwind CSS, Axios, `lucide-react` |
 | Backend | Node.js, Express |
 | Data Sources | football-data.org API, YouTube Data API |
-| Database | PostgreSQL via `DATABASE_URL` (Supabase / Neon) |
+| Database | PostgreSQL via `DATABASE_URL` (Neon) |
 | Automation | GitHub Actions |
-| UX | Responsive layout, RTL Hebrew interface, spoiler-free reveal flow |
+| UX | Responsive layout, RTL Hebrew interface, strictly spoiler-free |
 
 ## Getting Started
 
@@ -60,7 +66,7 @@ football-data.org   YouTube Data API
 
 - Node.js **20+**
 - npm
-- PostgreSQL database, or a hosted Postgres provider such as **Supabase** or **Neon**
+- PostgreSQL database via **Neon**
 - API keys for football-data.org and YouTube Data API v3
 
 ### Clone & Install
@@ -93,17 +99,6 @@ This root script:
 - builds the Vite frontend
 - installs backend dependencies
 
-### Run
-
-```bash
-npm start
-```
-
-This starts the Express API from the backend:
-
-```bash
-npm --prefix backend start
-```
 
 ## GitHub Actions / Automation
 
@@ -127,8 +122,8 @@ Additional squad automation workflows are also included for project operations.
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
 | `GET` | `/api/matches` | Returns matches for the dashboard |
-| `PATCH` | `/api/matches/:id/watched` | Marks a match as watched so score details can be revealed |
+| `PATCH` | `/api/matches/:id/watched` | Marks a match as watched (compacts the card) |
 
 ## Contributing
 
-Contributions are welcome. Keep the core product principle intact: **never expose spoilers unless the user explicitly chooses to reveal them.**
+Contributions are welcome. Keep the core product principle intact: **scores and match outcomes are never shown — no exceptions.**
