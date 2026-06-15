@@ -213,3 +213,10 @@ That mental model is the cleanest way to keep future changes small, spoiler-safe
 - Frontend bug to remember when discussing the backend contract: `frontend/src/App.jsx` expects `homeTeam.name` and `awayTeam.name`, but the backend returns plain string fields (`homeTeam`, `awayTeam`).
 - The frontend also keys matches with `match.id`, while backend records and API payloads expose `match.matchId`.
 - Treat this mismatch as known integration context for future backend/frontend coordination.
+
+## 2026-06-15 — Watched-state backend delivery
+
+- Added a safe `watched` boolean schema evolution in `initDB()` so existing databases can adopt the new field without destructive migration work.
+- Added `updateMatchWatched(matchId, watched)` in the DB layer and a `PATCH /api/matches/:id/watched` route with boolean validation, 404 handling, and updated-row responses.
+- Preserved user intent by keeping `upsertMatches()` from overwriting `watched` during ingestion syncs.
+- Outcome reported by execution: success.

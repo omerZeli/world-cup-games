@@ -132,3 +132,10 @@ The skeleton is good for a first pass, but it is not yet production-ready. The b
 - Added a sticky gradient header, polished match cards, status pills, and a generic highlight CTA with `lucide-react` Youtube/Play fallback.
 - Kept highlight rendering gated to `FINISHED` matches with a truthy `highlightUrl` and preserved spoiler-free output.
 - Validation note from execution: frontend build passed.
+
+## 2026-06-15 — Watched tabs and compact finished cards
+
+- Rewrote `frontend/src/App.jsx` around a two-tab finished/unwatched experience (`הסתיימו` / `לא הסתיימו`) with a sticky pill-style tab bar and smart default selection.
+- Added watched-state toggle controls on match cards using optimistic `PATCH /api/matches/:id/watched` updates with rollback on failure.
+- Changed watched finished cards into compact single-row items with reduced opacity so completed viewing history stays available without dominating the page.
+- Validation note from execution: frontend lint and build passed.

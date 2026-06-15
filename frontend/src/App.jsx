@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import * as Icons from 'lucide-react'
 import { translateTeam } from './utils/teamsTranslator'
 
-const { CalendarDays, CircleAlert, LoaderCircle, Play, Radio, Trophy } = Icons
+const { CalendarDays, CircleAlert, Eye, EyeOff, LoaderCircle, Play, Trophy } = Icons
 const youtubeKey = ['You', 'tube'].join('')
 const HighlightIcon = Icons[youtubeKey] ?? Play
 
@@ -75,45 +75,98 @@ function StateCard({ icon, title, message, tone = 'default', spin = false }) {
   )
 }
 
-function MatchCard({ match }) {
-  const { homeTeam, awayTeam, utcDate, status, highlightUrl } = match
+function MatchCard({ match, onToggleWatched }) {
+  const { matchId, homeTeam, awayTeam, utcDate, status, highlightUrl, watched } = match
+  const watchedLabel = watched ? 'נצפה' : 'לא נצפה'
 
   return (
-    <article className="rounded-xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-4">
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <h2 className="text-2xl font-bold text-slate-900">{translateTeam(homeTeam)}</h2>
-            <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold text-blue-800">
-              נגד
+    <article
+      className={`rounded-xl border border-slate-200 bg-white shadow-md transition-all hover:shadow-lg ${
+        watched ? 'opacity-60' : ''
+      }`}
+    >
+      {watched ? (
+        <div className="flex items-center justify-between gap-3 p-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 text-base font-bold text-slate-800 sm:text-lg">
+              <span className="truncate">{translateTeam(homeTeam)}</span>
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                נגד
+              </span>
+              <span className="truncate">{translateTeam(awayTeam)}</span>
+            </div>
+            <span className="inline-flex shrink-0 items-center rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+              {watchedLabel}
             </span>
-            <h2 className="text-2xl font-bold text-slate-900">{translateTeam(awayTeam)}</h2>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
-            <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
-              <CalendarDays className="h-4 w-4" />
-              {formatMatchTime(utcDate)}
+
+          <div className="flex shrink-0 items-center gap-2">
+            <span
+              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
+            >
+              {translateStatus(status)}
             </span>
+            <button
+              type="button"
+              onClick={() => onToggleWatched(matchId, watched)}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-blue-300 hover:text-blue-700"
+              aria-label="סמן כלא נצפה"
+              title="סמן כלא נצפה"
+            >
+              <EyeOff className="h-4 w-4" />
+            </button>
           </div>
         </div>
-        <span
-          className={`inline-flex items-center self-start rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
-        >
-          {translateStatus(status)}
-        </span>
-      </div>
+      ) : (
+        <div className="p-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-4">
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                <h2 className="text-2xl font-bold text-slate-900">{translateTeam(homeTeam)}</h2>
+                <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-blue-100 px-4 text-sm font-bold text-blue-800">
+                  נגד
+                </span>
+                <h2 className="text-2xl font-bold text-slate-900">{translateTeam(awayTeam)}</h2>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
+                  <CalendarDays className="h-4 w-4" />
+                  {formatMatchTime(utcDate)}
+                </span>
+              </div>
+            </div>
 
-      {status === 'FINISHED' && highlightUrl && (
-        <div className="mt-6">
-          <a
-            href={highlightUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-          >
-            <HighlightIcon className="h-4 w-4" />
-            צפה בתקציר
-          </a>
+            <div className="flex items-center gap-2 self-start">
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${getStatusBadgeClasses(status)}`}
+              >
+                {translateStatus(status)}
+              </span>
+              <button
+                type="button"
+                onClick={() => onToggleWatched(matchId, watched)}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-blue-300 hover:text-blue-700"
+                aria-label="סמן כנצפה"
+                title="סמן כנצפה"
+              >
+                <Eye className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {status === 'FINISHED' && highlightUrl && (
+            <div className="mt-6">
+              <a
+                href={highlightUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+              >
+                <HighlightIcon className="h-4 w-4" />
+                צפה בתקציר
+              </a>
+            </div>
+          )}
         </div>
       )}
     </article>
@@ -124,14 +177,51 @@ function App() {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState('unfinished')
 
   useEffect(() => {
     axios
       .get('/api/matches')
-      .then((res) => setMatches(res.data))
+      .then((res) => {
+        const nextMatches = res.data
+        setMatches(nextMatches)
+        setActiveTab(nextMatches.some((match) => match.status === 'FINISHED') ? 'finished' : 'unfinished')
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [])
+
+  const finishedMatches = useMemo(
+    () => matches.filter((match) => match.status === 'FINISHED'),
+    [matches],
+  )
+  const unfinishedMatches = useMemo(
+    () => matches.filter((match) => match.status !== 'FINISHED'),
+    [matches],
+  )
+  const visibleMatches = activeTab === 'finished' ? finishedMatches : unfinishedMatches
+
+  const toggleWatched = async (matchId, currentWatched) => {
+    const newValue = !currentWatched
+
+    setMatches((prev) =>
+      prev.map((match) =>
+        match.matchId === matchId ? { ...match, watched: newValue } : match,
+      ),
+    )
+
+    try {
+      const { data } = await axios.patch(`/api/matches/${matchId}/watched`, { watched: newValue })
+      setMatches((prev) => prev.map((match) => (match.matchId === matchId ? { ...match, ...data } : match)))
+    } catch (err) {
+      setMatches((prev) =>
+        prev.map((match) =>
+          match.matchId === matchId ? { ...match, watched: currentWatched } : match,
+        ),
+      )
+      console.error('Failed to update watched state', err)
+    }
+  }
 
   let content
 
@@ -163,17 +253,58 @@ function App() {
     )
   } else {
     content = (
-      <div className="grid gap-6">
-        {matches.map((match, index) => (
-          <MatchCard key={match.matchId ?? index} match={match} />
-        ))}
+      <div className="space-y-6">
+        <div className="sticky top-[5.5rem] z-10 -mx-4 border-b border-slate-200 bg-slate-50/95 px-4 py-3 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setActiveTab('finished')}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+                activeTab === 'finished'
+                  ? 'bg-blue-100 text-blue-800 shadow-sm'
+                  : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+              }`}
+            >
+              הסתיימו
+              <span className={`mr-2 text-xs ${activeTab === 'finished' ? 'text-blue-600' : 'text-slate-500'}`}>({finishedMatches.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('unfinished')}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+                activeTab === 'unfinished'
+                  ? 'bg-blue-100 text-blue-800 shadow-sm'
+                  : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+              }`}
+            >
+              לא הסתיימו
+              <span className={`mr-2 text-xs ${activeTab === 'unfinished' ? 'text-blue-600' : 'text-slate-500'}`}>({unfinishedMatches.length})</span>
+            </button>
+          </div>
+        </div>
+
+        {visibleMatches.length > 0 ? (
+          <div className="grid gap-6">
+            {visibleMatches.map((match, index) => (
+              <MatchCard
+                key={match.matchId ?? index}
+                match={match}
+                onToggleWatched={toggleWatched}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white/80 p-8 text-center text-slate-500 shadow-sm">
+            אין משחקים בלשונית זו כרגע.
+          </div>
+        )}
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
-      <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
+      <header className="sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-5">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-2xl">
             ⚽

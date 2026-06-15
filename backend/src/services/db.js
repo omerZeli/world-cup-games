@@ -18,6 +18,9 @@ export async function initDB() {
       "highlightUrl" TEXT
     )
   `);
+  await pool.query(`
+    ALTER TABLE matches ADD COLUMN IF NOT EXISTS "watched" BOOLEAN NOT NULL DEFAULT FALSE
+  `);
   console.log('✅ Database initialised (matches table ready)');
 }
 
@@ -41,4 +44,12 @@ export async function upsertMatches(matches) {
 export async function getMatches() {
   const { rows } = await pool.query(`SELECT * FROM matches ORDER BY "utcDate" ASC`);
   return rows;
+}
+
+export async function updateMatchWatched(matchId, watched) {
+  const { rows } = await pool.query(
+    `UPDATE matches SET "watched" = $1 WHERE "matchId" = $2 RETURNING *`,
+    [watched, matchId]
+  );
+  return rows[0] ?? null;
 }
