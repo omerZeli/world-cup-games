@@ -1,4 +1,39 @@
 {
-  "universe_usage_history": [],
-  "assignment_cast_snapshots": {}
+  "assignment_cast_snapshots": {
+    "world-cup-games-2026-06-15": {
+      "agents": [
+        {
+          "name": "Pelé",
+          "role": "Lead & Architect"
+        },
+        {
+          "name": "Zidane",
+          "role": "Backend Dev"
+        },
+        {
+          "name": "Ronaldinho",
+          "role": "Frontend Dev"
+        },
+        {
+          "name": "Roberto Carlos",
+          "role": "DevOps / Platform"
+        },
+        {
+          "name": "Maldini",
+          "role": "Tester / QA"
+        }
+      ],
+      "universe": "Greatest Football Players of All Time",
+      "cast_at": "2026-06-15T10:09:48.921+03:00"
+    }
+  },
+  "universe_usage_history": [
+    {
+      "project": "world-cup-games",
+      "agent_count": 5,
+      "used_at": "2026-06-15T10:09:48.921+03:00",
+      "universe": "Greatest Football Players of All Time",
+      "assignment_id": "world-cup-games-2026-06-15"
+    }
+  ]
 }

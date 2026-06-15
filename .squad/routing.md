@@ -5,15 +5,25 @@ How to decide who handles what.
 ## Routing Table
 
 | Work Type | Route To | Examples |
-|-----------|----------|----------|
-| {domain 1} | {Name} | {example tasks} |
-| {domain 2} | {Name} | {example tasks} |
-| {domain 3} | {Name} | {example tasks} |
-| Code review | {Name} | Review PRs, check quality, suggest improvements |
-| Testing | {Name} | Write tests, find edge cases, verify fixes |
-| Scope & priorities | {Name} | What to build next, trade-offs, decisions |
+|-----------|----------|---------|
+| Architecture & system design | Zidane | Data model, phase planning, API contracts, ADRs |
+| Code review & PRs | Zidane | Review all PRs, enforce spoiler-free constraint at review time |
+| Issue triage (`squad` label) | Zidane | Analyze GitHub issue, assign `squad:{member}` label, add triage notes |
+| Node.js worker / backend | Ramos | Worker script, date-fns windows, football API client, data.json schema |
+| Playwright scraping | Ramos | YouTube Hebrew search, DOM scraping, video URL extraction |
+| Database integration | Ramos | Supabase/Neon client, schema migrations, Phase 3 migration |
+| Spoiler-strip logic | Ramos | Drop score/goal fields at API boundary |
+| React / Vite frontend | Ronaldo | Components, SPA layout, Supabase data fetching, Vercel config |
+| UI/UX decisions | Ronaldo | Dashboard design, highlight button, match cards, empty states |
+| GitHub Actions CI/CD | Modric | Daily cron workflow, Playwright install in CI, secrets management |
+| Cloud DB provisioning | Modric | Supabase/Neon project setup, environment config |
+| Vercel deployment | Modric | Frontend deployment pipeline |
+| Test strategy & authorship | Navas | Integration tests, E2E tests, spoiler-leak test suite |
+| Edge case analysis | Navas | No matches, API down, missing YouTube video, Hebrew encoding |
+| CI test integration | Navas → Modric | Navas defines tests; Modric wires them into the workflow |
+| Scope & priorities | Zidane | What to build next, trade-offs, phase transitions |
 | Session logging | Scribe | Automatic — never needs routing |
-| RAI review | Rai | Content safety, bias checks, credential detection, ethical review |
+| RAI review | Rai | Credential detection, content safety, ethical review |
 
 ## Issue Routing
 

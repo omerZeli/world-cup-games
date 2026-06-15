@@ -1,3 +1,102 @@
 {
-  "agents": {}
+  "agents": {
+    "maldini": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "retired",
+      "persistent_name": "Maldini",
+      "role": "Tester / QA",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "rai": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "active",
+      "persistent_name": "Rai",
+      "role": "RAI Reviewer",
+      "universe": "exempt"
+    },
+    "roberto-carlos": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "retired",
+      "persistent_name": "Roberto Carlos",
+      "role": "DevOps / Platform",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "pele": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "retired",
+      "persistent_name": "Pelé",
+      "role": "Lead & Architect",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "ramos": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:19:12.453+03:00",
+      "status": "active",
+      "persistent_name": "Ramos",
+      "role": "Backend Dev",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "zidane": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "updated_at": "2026-06-15T10:19:12.453+03:00",
+      "status": "active",
+      "persistent_name": "Zidane",
+      "role": "Lead & Architect",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "modric": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:19:12.453+03:00",
+      "status": "active",
+      "persistent_name": "Modric",
+      "role": "DevOps / Platform",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "scribe": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "active",
+      "persistent_name": "Scribe",
+      "role": "Session Logger",
+      "universe": "exempt"
+    },
+    "navas": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:19:12.453+03:00",
+      "status": "active",
+      "persistent_name": "Navas",
+      "role": "Tester / QA",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "ronaldo": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:19:12.453+03:00",
+      "status": "active",
+      "persistent_name": "Ronaldo",
+      "role": "Frontend Dev",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "ronaldinho": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "retired",
+      "persistent_name": "Ronaldinho",
+      "role": "Frontend Dev",
+      "universe": "Greatest Football Players of All Time"
+    },
+    "ralph": {
+      "legacy_named": false,
+      "created_at": "2026-06-15T10:09:48.921+03:00",
+      "status": "active",
+      "persistent_name": "Ralph",
+      "role": "Work Monitor",
+      "universe": "exempt"
+    }
+  }
 }
+
