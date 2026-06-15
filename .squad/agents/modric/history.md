@@ -48,3 +48,4 @@
 - Important integration bug context: the frontend currently mismatches the backend payload in `frontend/src/App.jsx` by reading `homeTeam.name` / `awayTeam.name` even though the API returns plain strings.
 - The same file also uses `match.id` instead of `match.matchId` for React keys.
 - Keep this in mind when wiring CI, preview deployments, and any smoke-test expectations.
+2026-06-15 — Created root package.json with Render build/start scripts for monorepo deployment as single Web Service.

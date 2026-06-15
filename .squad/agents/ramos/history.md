@@ -220,3 +220,4 @@ That mental model is the cleanest way to keep future changes small, spoiler-safe
 - Added `updateMatchWatched(matchId, watched)` in the DB layer and a `PATCH /api/matches/:id/watched` route with boolean validation, 404 handling, and updated-row responses.
 - Preserved user intent by keeping `upsertMatches()` from overwriting `watched` during ingestion syncs.
 - Outcome reported by execution: success.
+2026-06-15 — Added ESM path/__dirname setup and express.static + catch-all route to backend/src/server.js for Render production deployment.

@@ -1,9 +1,14 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { getMatches, initDB, updateMatchWatched } from './services/db.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -39,6 +44,12 @@ app.patch('/api/matches/:id/watched', async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Failed to update watched status' });
   }
+});
+
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 
 async function start() {
