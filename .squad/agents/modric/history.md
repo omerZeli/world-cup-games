@@ -57,3 +57,9 @@
 - Includes `workflow_dispatch` for manual runs.
 - Uses Node 20 and installs Playwright Chromium before execution.
 - Injects `DATABASE_URL` and `FOOTBALL_API_KEY` secrets into the job.
+
+## 2026-06-15 — Daily worker workflow updated for YouTube API migration
+
+- Updated `.github/workflows/daily-worker.yml`.
+- Removed the Playwright Chromium install step.
+- Added `YOUTUBE_API_KEY` to the workflow env secrets block.

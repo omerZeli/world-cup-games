@@ -15,6 +15,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -27,10 +28,6 @@ jobs:
 
       - name: Install backend dependencies
         run: npm install --prefix backend
-
-      - name: Install Playwright Chromium
-        working-directory: backend
-        run: npx playwright install chromium --with-deps
 
       - name: Run worker
         working-directory: backend

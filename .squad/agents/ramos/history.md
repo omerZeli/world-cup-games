@@ -221,3 +221,10 @@ That mental model is the cleanest way to keep future changes small, spoiler-safe
 - Preserved user intent by keeping `upsertMatches()` from overwriting `watched` during ingestion syncs.
 - Outcome reported by execution: success.
 2026-06-15 — Added ESM path/__dirname setup and express.static + catch-all route to backend/src/server.js for Render production deployment.
+
+## 2026-06-15 — YouTube highlight lookup migrated to Data API v3
+
+- Migrated YouTube highlight lookup from Playwright scraper to YouTube Data API v3.
+- Created `youtubeApi.js` with an `axios` GET request to `googleapis/youtube/v3/search`, using `regionCode=IL` and `YOUTUBE_API_KEY`.
+- Updated `worker.js` to use `fetchHighlightUrl`.
+- Removed `playwright` from `package.json`.
