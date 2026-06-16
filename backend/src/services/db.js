@@ -40,7 +40,7 @@ export async function upsertMatches(matches) {
        VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT ("matchId") DO UPDATE
          SET "status"       = EXCLUDED."status",
-             "highlightUrl" = EXCLUDED."highlightUrl"`,
+             "highlightUrl" = COALESCE(EXCLUDED."highlightUrl", matches."highlightUrl")`,
       [m.matchId, m.homeTeam, m.awayTeam, m.utcDate, m.status, m.highlightUrl ?? null]
     );
   }
@@ -49,8 +49,32 @@ export async function upsertMatches(matches) {
 }
 
 export async function getMatches() {
-  const { rows } = await pool.query(`SELECT * FROM matches ORDER BY "utcDate" ASC`);
+  const { rows } = await pool.query(`
+    SELECT *
+    FROM matches
+    WHERE "utcDate"::timestamptz >= NOW() - INTERVAL '2 days'
+    ORDER BY "utcDate"::timestamptz ASC
+  `);
   return rows;
+}
+
+export async function getFinishedMatchesWithoutHighlight() {
+  const { rows } = await pool.query(`
+    SELECT *
+    FROM matches
+    WHERE "status" = 'FINISHED'
+      AND "highlightUrl" IS NULL
+      AND "utcDate"::timestamptz >= NOW() - INTERVAL '3 days'
+    ORDER BY "utcDate"::timestamptz ASC
+  `);
+  return rows;
+}
+
+export async function updateHighlightUrl(matchId, highlightUrl) {
+  await pool.query(
+    `UPDATE matches SET "highlightUrl" = $1 WHERE "matchId" = $2`,
+    [highlightUrl, matchId]
+  );
 }
 
 export async function updateMatchWatched(matchId, watched) {

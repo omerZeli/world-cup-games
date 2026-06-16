@@ -10,6 +10,7 @@ import {
   updateMatchWatched
 } from './services/db.js';
 import { run as runWorker } from './worker.js';
+import { getYesterdayISO, getTomorrowISO } from './utils/time.js';
 
 dotenv.config();
 
@@ -26,7 +27,13 @@ app.use(express.json());
 app.get('/api/matches', async (req, res) => {
   try {
     const matches = await getMatches();
-    res.json(matches);
+    const windowStart = new Date(getYesterdayISO()).getTime();
+    const windowEnd   = new Date(getTomorrowISO()).getTime();
+    const filtered = matches.filter((m) => {
+      const t = new Date(m.utcDate).getTime();
+      return t >= windowStart && t <= windowEnd;
+    });
+    res.json(filtered);
   } catch (error) {
     console.error('Failed to fetch matches:', error.message);
     res.status(500).json({ error: 'Failed to fetch matches' });
