@@ -364,9 +364,9 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <header className="relative sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
-        {/* Centered logo + title */}
-        <div className="flex items-center justify-center gap-4 px-4 py-5">
-          <div className="h-12 w-12 overflow-hidden rounded-full bg-white/15">
+        {/* Logo + title — centered on all screen sizes */}
+        <div className="flex items-center justify-center gap-4 px-4 py-4">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white/15">
             <img src="/logo.png" alt="מונדיאל 2026" className="h-full w-full object-cover" />
           </div>
           <div>
@@ -377,8 +377,8 @@ function App() {
           </div>
         </div>
 
-        {/* Left-edge controls — absolutely positioned */}
-        <div className="absolute bottom-0 left-8 top-0 flex flex-col items-center justify-center gap-1.5">
+        {/* Controls — inline row on mobile, absolute left on desktop */}
+        <div className="flex flex-col items-center gap-1.5 pb-3 md:absolute md:bottom-0 md:left-8 md:top-0 md:flex-col md:items-center md:justify-center md:pb-0">
           <button
             type="button"
             onClick={handleRunWorker}
@@ -388,7 +388,7 @@ function App() {
             <RefreshCw className={`h-4 w-4 ${workerRunning ? 'animate-spin' : ''}`} />
             עדכן נתונים
           </button>
-          <div className="flex flex-wrap items-center gap-1.5 text-xs text-blue-100">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-blue-100">
             <span className="inline-flex items-center gap-1">
               <Clock3 className="h-3.5 w-3.5" />
               {lastRun?.ran_at
