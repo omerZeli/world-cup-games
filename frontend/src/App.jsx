@@ -3,7 +3,7 @@ import axios from 'axios'
 import * as Icons from 'lucide-react'
 import { translateTeam } from './utils/teamsTranslator'
 
-const { CalendarDays, CircleAlert, Eye, EyeOff, LoaderCircle, Play, Trophy } = Icons
+const { CalendarDays, CircleAlert, Clock3, Eye, EyeOff, LoaderCircle, Play, RefreshCw, Trophy } = Icons
 const youtubeKey = ['You', 'tube'].join('')
 const HighlightIcon = Icons[youtubeKey] ?? Play
 
@@ -15,6 +15,20 @@ function formatMatchTime(utcDate) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function formatWorkerRunTime(dateTime) {
+  return new Date(dateTime).toLocaleString('he-IL', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function getErrorMessage(err, fallbackMessage) {
+  return err.response?.data?.message ?? err.message ?? fallbackMessage
 }
 
 function translateStatus(status) {
@@ -175,18 +189,46 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('unfinished')
+  const [workerRunning, setWorkerRunning] = useState(false)
+  const [lastRun, setLastRun] = useState(null)
+  const [workerError, setWorkerError] = useState(null)
 
   useEffect(() => {
-    axios
-      .get('/api/matches')
-      .then((res) => {
-        const nextMatches = res.data
+    const loadInitialData = async () => {
+      const [matchesResult, lastRunResult] = await Promise.allSettled([
+        axios.get('/api/matches'),
+        axios.get('/api/worker/last-run'),
+      ])
+
+      if (matchesResult.status === 'fulfilled') {
+        const nextMatches = matchesResult.value.data
         setMatches(nextMatches)
         setActiveTab(nextMatches.some((match) => match.status === 'FINISHED') ? 'finished' : 'unfinished')
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
+      } else {
+        setError(getErrorMessage(matchesResult.reason, 'אירעה שגיאה בטעינת המשחקים'))
+      }
+
+      if (lastRunResult.status === 'fulfilled') {
+        setLastRun(lastRunResult.value.data)
+      } else {
+        setWorkerError(getErrorMessage(lastRunResult.reason, 'לא ניתן לטעון את זמן העדכון האחרון'))
+      }
+
+      setLoading(false)
+    }
+
+    loadInitialData()
   }, [])
+
+  useEffect(() => {
+    if (!workerError) {
+      return undefined
+    }
+
+    const timeoutId = window.setTimeout(() => setWorkerError(null), 5000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [workerError])
 
   const finishedMatches = useMemo(
     () => matches.filter((match) => match.status === 'FINISHED'),
@@ -197,6 +239,11 @@ function App() {
     [matches],
   )
   const visibleMatches = activeTab === 'finished' ? finishedMatches : unfinishedMatches
+
+  const fetchMatches = async () => {
+    const { data } = await axios.get('/api/matches')
+    setMatches(data)
+  }
 
   const toggleWatched = async (matchId, currentWatched) => {
     const newValue = !currentWatched
@@ -217,6 +264,21 @@ function App() {
         ),
       )
       console.error('Failed to update watched state', err)
+    }
+  }
+
+  const handleRunWorker = async () => {
+    setWorkerRunning(true)
+    setWorkerError(null)
+
+    try {
+      const { data } = await axios.post('/api/worker/run')
+      setLastRun(data)
+      await fetchMatches()
+    } catch (err) {
+      setWorkerError(getErrorMessage(err, 'לא ניתן לעדכן את הנתונים כרגע'))
+    } finally {
+      setWorkerRunning(false)
     }
   }
 
@@ -301,8 +363,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
-      <header className="sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
-        <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-5">
+      <header className="relative sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
+        {/* Centered logo + title */}
+        <div className="flex items-center justify-center gap-4 px-4 py-5">
           <div className="h-12 w-12 overflow-hidden rounded-full bg-white/15">
             <img src="/logo.png" alt="מונדיאל 2026" className="h-full w-full object-cover" />
           </div>
@@ -312,6 +375,42 @@ function App() {
               עקוב אחרי המשחקים ועבור ישירות לתקצירים.
             </p>
           </div>
+        </div>
+
+        {/* Left-edge controls — absolutely positioned */}
+        <div className="absolute bottom-0 left-8 top-0 flex flex-col items-center justify-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleRunWorker}
+            disabled={workerRunning}
+            className="inline-flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <RefreshCw className={`h-4 w-4 ${workerRunning ? 'animate-spin' : ''}`} />
+            עדכן נתונים
+          </button>
+          <div className="flex flex-wrap items-center gap-1.5 text-xs text-blue-100">
+            <span className="inline-flex items-center gap-1">
+              <Clock3 className="h-3.5 w-3.5" />
+              {lastRun?.ran_at
+                ? `עודכן: ${formatWorkerRunTime(lastRun.ran_at)}`
+                : 'מעולם לא עודכן'}
+            </span>
+            {lastRun?.ran_at && lastRun.triggered_by === 'manual' && (
+              <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold text-white">
+                ידני
+              </span>
+            )}
+            {lastRun?.ran_at && lastRun.triggered_by === 'scheduled' && (
+              <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold text-white">
+                אוטומטי
+              </span>
+            )}
+          </div>
+          {workerError && (
+            <p className="rounded-md bg-red-500/20 px-2.5 py-1 text-xs text-red-100">
+              {workerError}
+            </p>
+          )}
         </div>
       </header>
 

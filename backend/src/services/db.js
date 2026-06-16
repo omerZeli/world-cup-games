@@ -21,7 +21,14 @@ export async function initDB() {
   await pool.query(`
     ALTER TABLE matches ADD COLUMN IF NOT EXISTS "watched" BOOLEAN NOT NULL DEFAULT FALSE
   `);
-  console.log('✅ Database initialised (matches table ready)');
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS worker_runs (
+      id SERIAL PRIMARY KEY,
+      ran_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      triggered_by TEXT NOT NULL DEFAULT 'scheduled'
+    )
+  `);
+  console.log('✅ Database initialised (matches and worker_runs tables ready)');
 }
 
 export async function upsertMatches(matches) {
@@ -51,5 +58,23 @@ export async function updateMatchWatched(matchId, watched) {
     `UPDATE matches SET "watched" = $1 WHERE "matchId" = $2 RETURNING *`,
     [watched, matchId]
   );
+  return rows[0] ?? null;
+}
+
+export async function recordWorkerRun(triggeredBy) {
+  const { rows } = await pool.query(
+    `INSERT INTO worker_runs (triggered_by) VALUES ($1) RETURNING ran_at, triggered_by`,
+    [triggeredBy]
+  );
+  return rows[0];
+}
+
+export async function getLastWorkerRun() {
+  const { rows } = await pool.query(`
+    SELECT ran_at, triggered_by
+    FROM worker_runs
+    ORDER BY ran_at DESC, id DESC
+    LIMIT 1
+  `);
   return rows[0] ?? null;
 }

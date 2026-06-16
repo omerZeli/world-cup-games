@@ -1,12 +1,14 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { fetchMatches } from './services/footballApi.js';
 import { translateTeam } from './utils/teamsTranslator.js';
 import { fetchHighlightUrl } from './services/youtubeApi.js';
-import { initDB, upsertMatches } from './services/db.js';
+import { initDB, recordWorkerRun, upsertMatches } from './services/db.js';
 
 dotenv.config();
 
-async function run() {
+export async function run(triggeredBy = 'scheduled') {
   await initDB();
   const matches = await fetchMatches();
   console.log(`Fetched ${matches.length} matches`);
@@ -36,9 +38,15 @@ async function run() {
   const allMatches = [...upcomingMatches, ...finishedMatches];
 
   await upsertMatches(allMatches);
+  return recordWorkerRun(triggeredBy);
 }
 
-run().catch((error) => {
-  console.error(`Worker failed: ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
-});
+const isDirectRun =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
+  run('scheduled').catch((error) => {
+    console.error(`Worker failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
+}

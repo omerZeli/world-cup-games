@@ -3,7 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getMatches, initDB, updateMatchWatched } from './services/db.js';
+import {
+  getLastWorkerRun,
+  getMatches,
+  initDB,
+  updateMatchWatched
+} from './services/db.js';
+import { run as runWorker } from './worker.js';
 
 dotenv.config();
 
@@ -12,6 +18,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+let isWorkerRunning = false;
 
 app.use(cors());
 app.use(express.json());
@@ -43,6 +50,47 @@ app.patch('/api/matches/:id/watched', async (req, res) => {
     return res.json(match);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to update watched status' });
+  }
+});
+
+app.get('/api/worker/last-run', async (req, res) => {
+  try {
+    const lastRun = await getLastWorkerRun();
+
+    if (!lastRun) {
+      return res.json({ ran_at: null });
+    }
+
+    return res.json({
+      ran_at: lastRun.ran_at instanceof Date ? lastRun.ran_at.toISOString() : lastRun.ran_at,
+      triggered_by: lastRun.triggered_by
+    });
+  } catch (error) {
+    console.error('Failed to fetch worker last run:', error.message);
+    return res.status(500).json({ error: 'Failed to fetch worker last run' });
+  }
+});
+
+app.post('/api/worker/run', async (req, res) => {
+  if (isWorkerRunning) {
+    return res.status(409).json({ error: 'Worker is already running' });
+  }
+
+  isWorkerRunning = true;
+
+  try {
+    const lastRun = await runWorker('manual');
+    return res.json({
+      ran_at: lastRun.ran_at instanceof Date ? lastRun.ran_at.toISOString() : lastRun.ran_at,
+      triggered_by: lastRun.triggered_by
+    });
+  } catch (error) {
+    console.error('Manual worker run failed:', error);
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : String(error)
+    });
+  } finally {
+    isWorkerRunning = false;
   }
 });
 
