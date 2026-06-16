@@ -2,7 +2,7 @@ name: Daily Worker - Update Database
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '4 7 * * *'
   workflow_dispatch:
 
 permissions:
