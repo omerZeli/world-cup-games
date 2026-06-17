@@ -51,6 +51,7 @@ const TEAMS_HE = {
   'Cabo Verde':           'כף ורדה',
   'Cape Verde Islands':   'כף ורדה',
   'DR Congo':             'קונגו הדמוקרטית',
+  'Congo DR':             'קונגו הדמוקרטית',
   'Democratic Republic of the Congo': 'קונגו הדמוקרטית',
 
   // Asia & Oceania
