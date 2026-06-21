@@ -37,6 +37,7 @@ const TEAMS_HE = {
   Czechia:                'צ\'כיה',
   Scotland:               'סקוטלנד',
   'Bosnia and Herzegovina': 'בוסניה והרצגובינה',
+  'Bosnia-Herzegovina':   'בוסניה והרצגובינה',
 
   // Africa
   Morocco:                'מרוקו',
