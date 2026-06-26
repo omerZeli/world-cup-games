@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function fetchHighlightUrl(homeTeamHebrew, awayTeamHebrew) {
-  const query = `מונדיאל 2026 תקציר ${homeTeamHebrew} נגד ${awayTeamHebrew} כאן 11`;
+  const query = `תקציר: ${homeTeamHebrew} - ${awayTeamHebrew} | כאן - מונדיאל 2026`;
 
   try {
     const { data } = await axios.get('https://www.googleapis.com/youtube/v3/search', {
