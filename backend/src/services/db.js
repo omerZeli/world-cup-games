@@ -28,7 +28,39 @@ export async function initDB() {
       triggered_by TEXT NOT NULL DEFAULT 'scheduled'
     )
   `);
-  console.log('✅ Database initialised (matches and worker_runs tables ready)');
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS bracket_picks (
+      round       INTEGER NOT NULL,
+      match_index INTEGER NOT NULL,
+      slot        INTEGER NOT NULL,
+      team        TEXT    NOT NULL,
+      PRIMARY KEY (round, match_index, slot)
+    )
+  `);
+  console.log('✅ Database initialised (matches, worker_runs, bracket_picks tables ready)');
+}
+
+export async function getBracketPicks() {
+  const { rows } = await pool.query(
+    `SELECT round, match_index, slot, team FROM bracket_picks ORDER BY round, match_index, slot`
+  );
+  return rows;
+}
+
+export async function saveBracketPick(round, matchIndex, slot, team) {
+  await pool.query(
+    `INSERT INTO bracket_picks (round, match_index, slot, team)
+     VALUES ($1, $2, $3, $4)
+     ON CONFLICT (round, match_index, slot) DO UPDATE SET team = EXCLUDED.team`,
+    [round, matchIndex, slot, team]
+  );
+}
+
+export async function deleteBracketPick(round, matchIndex, slot) {
+  await pool.query(
+    `DELETE FROM bracket_picks WHERE round = $1 AND match_index = $2 AND slot = $3`,
+    [round, matchIndex, slot]
+  );
 }
 
 export async function upsertMatches(matches) {

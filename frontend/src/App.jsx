@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import * as Icons from 'lucide-react'
 import { translateTeam } from './utils/teamsTranslator'
+import BracketPage from './BracketPage'
 
-const { CalendarDays, CircleAlert, Clock3, Eye, EyeOff, LoaderCircle, Play, RefreshCw, Trophy } = Icons
+const { CalendarDays, CircleAlert, Clock3, Eye, EyeOff, LoaderCircle, Play, RefreshCw, Trophy, GitBranch } = Icons
 const youtubeKey = ['You', 'tube'].join('')
 const HighlightIcon = Icons[youtubeKey] ?? Play
 
@@ -192,6 +193,7 @@ function App() {
   const [workerRunning, setWorkerRunning] = useState(false)
   const [lastRun, setLastRun] = useState(null)
   const [workerError, setWorkerError] = useState(null)
+  const [page, setPage] = useState('matches')
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -364,7 +366,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <header className="relative sticky top-0 z-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
-        {/* Logo + title — centered on all screen sizes */}
+        {/* Logo + title — centered */}
         <div className="flex items-center justify-center gap-4 px-4 py-4">
           <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white/15">
             <img src="/logo.png" alt="מונדיאל 2026" className="h-full w-full object-cover" />
@@ -377,8 +379,36 @@ function App() {
           </div>
         </div>
 
-        {/* Controls — inline row on mobile, absolute left on desktop */}
-        <div className="flex flex-col items-center gap-1.5 pb-3 md:absolute md:bottom-0 md:left-8 md:top-0 md:flex-col md:items-center md:justify-center md:pb-0">
+        {/* Page navigation — centered row on mobile, absolute right on desktop */}
+        <div className="flex justify-center gap-2 pb-3 md:absolute md:inset-y-0 md:right-4 md:pb-0 md:items-center">
+          <button
+            type="button"
+            onClick={() => setPage('matches')}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+              page === 'matches'
+                ? 'bg-white text-blue-800 shadow'
+                : 'bg-white/15 text-white hover:bg-white/25'
+            }`}
+          >
+            <Trophy className="h-3.5 w-3.5" />
+            משחקים
+          </button>
+          <button
+            type="button"
+            onClick={() => setPage('bracket')}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+              page === 'bracket'
+                ? 'bg-white text-blue-800 shadow'
+                : 'bg-white/15 text-white hover:bg-white/25'
+            }`}
+          >
+            <GitBranch className="h-3.5 w-3.5" />
+            בראקט
+          </button>
+        </div>
+
+        {/* Controls — centered on mobile, absolute left on desktop */}
+        <div className="flex flex-col items-center gap-1.5 pb-3 md:absolute md:inset-y-0 md:left-8 md:pb-0 md:justify-center">
           <button
             type="button"
             onClick={handleRunWorker}
@@ -414,7 +444,13 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-8">{content}</main>
+      <main className={page === 'bracket' ? 'mx-auto max-w-5xl px-4 py-8' : 'mx-auto max-w-4xl px-4 py-8'}>
+        {page === 'bracket' ? (
+          <BracketPage />
+        ) : (
+          content
+        )}
+      </main>
     </div>
   )
 }

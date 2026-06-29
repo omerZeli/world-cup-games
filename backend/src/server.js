@@ -4,9 +4,12 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
+  deleteBracketPick,
+  getBracketPicks,
   getLastWorkerRun,
   getMatches,
   initDB,
+  saveBracketPick,
   updateMatchWatched
 } from './services/db.js';
 import { run as runWorker } from './worker.js';
@@ -98,6 +101,60 @@ app.post('/api/worker/run', async (req, res) => {
     });
   } finally {
     isWorkerRunning = false;
+  }
+});
+
+// Bracket picks
+
+const MAX_MATCH_INDEX = { 1: 15, 2: 7, 3: 3, 4: 1, 5: 0, 6: 0 };
+
+function validateBracketParams(round, matchIndex, slot) {
+  const r = Number(round);
+  const m = Number(matchIndex);
+  const s = Number(slot);
+  if (![1, 2, 3, 4, 5, 6].includes(r)) return 'Invalid round';
+  if (m < 0 || m > (MAX_MATCH_INDEX[r] ?? 0)) return 'Invalid matchIndex';
+  if (![0, 1].includes(s)) return 'Invalid slot';
+  if (r === 6 && s !== 0) return 'Champion slot must be 0';
+  return null;
+}
+
+app.get('/api/bracket', async (req, res) => {
+  try {
+    const picks = await getBracketPicks();
+    return res.json(picks);
+  } catch (error) {
+    console.error('Failed to fetch bracket picks:', error.message);
+    return res.status(500).json({ error: 'Failed to fetch bracket picks' });
+  }
+});
+
+app.post('/api/bracket/pick', async (req, res) => {
+  const { round, matchIndex, slot, team } = req.body;
+  const err = validateBracketParams(round, matchIndex, slot);
+  if (err) return res.status(400).json({ error: err });
+  if (!team || typeof team !== 'string') return res.status(400).json({ error: 'team is required' });
+
+  try {
+    await saveBracketPick(Number(round), Number(matchIndex), Number(slot), team);
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Failed to save bracket pick:', error.message);
+    return res.status(500).json({ error: 'Failed to save bracket pick' });
+  }
+});
+
+app.delete('/api/bracket/pick', async (req, res) => {
+  const { round, matchIndex, slot } = req.body;
+  const err = validateBracketParams(round, matchIndex, slot);
+  if (err) return res.status(400).json({ error: err });
+
+  try {
+    await deleteBracketPick(Number(round), Number(matchIndex), Number(slot));
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Failed to delete bracket pick:', error.message);
+    return res.status(500).json({ error: 'Failed to delete bracket pick' });
   }
 });
 
